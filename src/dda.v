@@ -59,18 +59,15 @@ module euler_integrator(out, funct, clk, rst_n, ic);
 
 	wire [N-1:0] out_mult;
 	
-	wire [N-1:0] dt = 16'h0400; // Time step
-
 	// compute new state variable with dt 
 	// v1(n+1) = v1(n) + dt*funct(n)
 
     // Multiply funct(n) by constant dt
-	posit_mult  #(
+	posit_dt_mult  #(
 		.N(N),
 		.ES(ES)
 	) mult (
 		.in1(funct),
-		.in2(dt),
 		.out(out_mult)
 	);
 

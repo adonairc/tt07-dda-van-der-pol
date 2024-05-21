@@ -3,6 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+///////////
+// Adder //
+///////////
 module posit_add (in1, in2, out);
 
 function [31:0] log2;
@@ -148,7 +151,9 @@ assign out = inf|zero|(~DSR_left_out[N-1]) ? {inf,{N-1{1'b0}}} : {ls, tmp1_oN[N-
 
 endmodule
 
-
+////////////////
+// Multiplier //
+////////////////
 module posit_mult(in1, in2, out);
 
 function [31:0] log2;
@@ -231,6 +236,101 @@ wire [N-1:0] tmp1_o_rnd = (r_o < N-ES-2) ? tmp1_o_rnd_ulp[N-1:0] : tmp1_o[2*N-1+
 wire [N-1:0] tmp1_oN = mult_s ? -tmp1_o_rnd : tmp1_o_rnd;
 assign out = inf|zero|(~mult_mN[2*(N-ES)+1]) ? {inf,{N-1{1'b0}}} : {mult_s, tmp1_oN[N-1:1]};
 endmodule
+
+
+///////////////////////////////////////////////
+// Multiply by hard-coded constant in (16,1) //
+/// dt = 0x8000 					         //
+///////////////////////////////////////////////
+module posit_dt_mult(in1, out);
+
+function [31:0] log2;
+input reg [31:0] value;
+	begin
+	value = value-1;
+	for (log2=0; value>0; log2=log2+1)
+        	value = value>>1;
+      	end
+endfunction
+
+parameter N = 16;
+parameter Bs = log2(N); 
+parameter ES = 1;
+
+input [N-1:0] in1;
+output [N-1:0] out;
+
+wire s1 = in1[N-1];
+wire s2; //
+
+assign s2 = 0;
+
+wire zero_tmp1 = |in1[N-2:0];
+wire inf = in1[N-1] & (~zero_tmp1);
+wire zero = ~(in1[N-1] | zero_tmp1);
+
+//Data Extraction
+wire rc1, rc2;
+wire [Bs-1:0] regime1, regime2;
+wire [ES-1:0] e1, e2;
+wire [N-ES-1:0] mant1, mant2;
+wire [N-1:0] xin1 = s1 ? -in1 : in1;
+wire [N-1:0] xin2;
+
+data_extract_v1 #(.N(N),.ES(ES)) uut_de1(.in(xin1), .rc(rc1), .regime(regime1), .exp(e1), .mant(mant1));
+
+// data_extract_v1 #(.N(N),.ES(ES)) uut_de2(.in(xin2), .rc(rc2), .regime(regime2), .exp(e2), .mant(mant2));
+assign regime2 = 4;
+assign xin2 = 16'h0400;
+assign rc2 = 0;
+assign e2 = 0;
+assign mant2 = 0;
+
+wire [N-ES:0] m1 = {zero_tmp1,mant1};
+wire [N-ES:0] m2;
+
+assign m2 = 16'h8000;
+
+//Sign, Exponent and Mantissa Computation
+wire mult_s = s1;
+
+wire [2*(N-ES)+1:0] mult_m = m1*m2;
+wire mult_m_ovf = mult_m[2*(N-ES)+1];
+wire [2*(N-ES)+1:0] mult_mN = ~mult_m_ovf ? mult_m << 1'b1 : mult_m;
+
+wire [Bs+1:0] r1 = rc1 ? {2'b0,regime1} : -regime1;
+wire [Bs+1:0] r2 = rc2 ? {2'b0,regime2} : -regime2;
+wire [Bs+ES+1:0] mult_e;
+m_add_N_Cin #(.N(Bs+ES+1)) uut_add_exp ({r1,e1}, {r2,e2}, mult_m_ovf, mult_e);
+
+//Exponent and Regime Computation
+wire [ES-1:0] e_o;
+wire [Bs:0] r_o;
+m_reg_exp_op #(.ES(ES), .Bs(Bs)) uut_reg_ro (mult_e[ES+Bs+1:0], e_o, r_o);
+
+//Exponent, Mantissa and GRS Packing
+wire [2*N-1+3:0]tmp_o = {{N{~mult_e[ES+Bs+1]}},mult_e[ES+Bs+1],e_o,mult_mN[2*(N-ES):2*(N-ES)-(N-ES-1)+1], mult_mN[2*(N-ES)-(N-ES-1):2*(N-ES)-(N-ES-1)-1], |mult_mN[2*(N-ES)-(N-ES-1)-2:0] }; 
+
+
+//Including Regime bits in Exponent-Mantissa Packing
+wire [3*N-1+3:0] tmp1_o;
+DSR_right_N_S #(.N(3*N+3), .S(Bs+1)) dsr2 (.a({tmp_o,{N{1'b0}}}), .b(r_o[Bs] ? {Bs{1'b1}} : r_o), .c(tmp1_o));
+
+//Rounding RNE : ulp_add = G.(R + S) + L.G.(~(R+S))
+wire L = tmp1_o[N+4], G = tmp1_o[N+3], R = tmp1_o[N+2], St = |tmp1_o[N+1:0],
+     ulp = ((G & (R | St)) | (L & G & ~(R | St)));
+wire [N-1:0] rnd_ulp = {{N-1{1'b0}},ulp};
+
+wire [N:0] tmp1_o_rnd_ulp;
+m_add_N #(.N(N)) uut_add_ulp (tmp1_o[2*N-1+3:N+3], rnd_ulp, tmp1_o_rnd_ulp);
+wire [N-1:0] tmp1_o_rnd = (r_o < N-ES-2) ? tmp1_o_rnd_ulp[N-1:0] : tmp1_o[2*N-1+3:N+3];
+
+
+//Final Output
+wire [N-1:0] tmp1_oN = mult_s ? -tmp1_o_rnd : tmp1_o_rnd;
+assign out = inf|zero|(~mult_mN[2*(N-ES)+1]) ? {inf,{N-1{1'b0}}} : {mult_s, tmp1_oN[N-1:1]};
+endmodule
+
 
 /////////////////////////////
 // Adder auxiliary modules //
