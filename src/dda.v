@@ -22,7 +22,7 @@ posit_mult #(.N(N),.ES(ES)) mult1(.in1(x), .in2(x), .out(w_mult1)); // Multiply 
 posit_mult #(.N(N),.ES(ES)) mult2(.in1(mu), .in2(w_sub1), .out(w_mult2)); // Multiply mu*(1-x*x)
 posit_mult #(.N(N),.ES(ES)) mult3(.in1(w_mult2), .in2(y), .out(w_mult3)); // Multiply mu*(1-x*x)*y
 
-// Subtractions
+// Subtraction
 wire [N-1:0] w_sub1, w_sub2;
 
 wire [N-1:0] w_neg_mult1;
