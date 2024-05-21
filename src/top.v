@@ -4,8 +4,6 @@
  */
 
 `default_nettype none
-`include "dda.v"
-`include "posit.v"
 
 module tt_um_adonairc_dda (
     input  wire [7:0] ui_in,    // Dedicated inputs
