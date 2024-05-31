@@ -79,7 +79,6 @@ module tt_um_adonairc_dda (
 		if (!rst_n) begin
 			icx <= 16'h3000;
 			icy <= 16'h3000;
-			data_sent <= 0;
 		end
 	end
 
