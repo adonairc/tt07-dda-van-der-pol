@@ -1,6 +1,6 @@
 # Tiny Tapeout project information
 project:
-  title:        "DDA van der Pol oscillator"      # Project title
+  title:        "DDA solver for van der Pol oscillator"      # Project title
   author:       "Adonai Cruz"      # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "Digital differential analyzer (DDA) solver for the van der Pol oscillator using posit (16,1)"      # One line description of what your project does
