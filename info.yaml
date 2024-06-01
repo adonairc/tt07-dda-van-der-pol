@@ -3,7 +3,7 @@ project:
   title:        "DDA van der Pol oscillator"      # Project title
   author:       "Adonai Cruz"      # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  "Digital differential analyzer solver for the van der Pol oscillator using Posit(16,1)"      # One line description of what your project does
+  description:  "Digital differential analyzer (DDA) solver for the van der Pol oscillator using posit (16,1)"      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
   clock_hz:    0       # Clock frequency in Hz (or 0 if not applicable)
 
