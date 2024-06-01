@@ -18,10 +18,10 @@ $$
 \end{align}
 $$
 
-The phase portraits for varying parameter $\mu$ are shown below. When $\mu=0$ the system behaves as a harmonic oscillator 
+The phase portraits for varying parameter $\mu$ are shown below. When $\mu=0$ there is no dumping and the system behaves as a harmonic oscillator. For $\mu > 0$ the oscillator converges to a globally unique limit cycle and shows relaxation oscillations without external forcing.
 
 
-![image](docs/vdp_mu_0_0.png) ![image](docs/vdp_mu_1_0.png) ![image](docs/vdp_mu_4_0.png)
+![image](docs/dda_plots.png)
 
 The set of coupled ODEs can be implemented in digital circuit as shown in the diagram below. At each DDA clock the integrators calculate the solutions for one time step $dt$.
 
@@ -32,7 +32,7 @@ For simplicity and limited chip area the time step is fixed by $dt = 1/256$ whic
 
 ## What are posit numbers
 
-[Posit](https://spectrum.ieee.org/floating-point-numbers-posits-processor) number offers a new way to encode and operate with floating point numbers in digital systems that is recently gaining attention for applications in AI hardware accelerators. Compared to the standard IEEE 754 floating-point format, posits offer a few advantages including the ability to get more precision or dynamic range out of a given number of bits allowing hardware optimizations to specific applications.
+[Posit](https://spectrum.ieee.org/floating-point-numbers-posits-processor) number offers a new way to encode and operate with floating point numbers in digital systems that is recently gaining attention for applications in AI hardware accelerators. Compared to the standard IEEE 754 floating-point format, posits offer a few advantages including the ability to trade off between precision and dynamic range for a given number of bits allowing hardware optimizations to specific applications.
 
 Dynamic range is given by $(2n-4)2^{es}\log_{10}2$
 

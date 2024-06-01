@@ -17,7 +17,7 @@ The DDA core expects to receive via SPI port the parameter for the van der Pol o
 
 In order to test chip reset the chip (RST_N low) and start a duplex SPI communication transmitting 32-bit word with the van der Pol parameter $\mu$ encoded in posit (16,1) using the 16 bits LSB of the 32-bit word (padded with zeros). A controller software to interface with the chip via FTDI FT232H using SPI is available at [https://github.com/adonairc/tt07-dda-van-der-pol](https://github.com/adonairc/tt07-dda-van-der-pol)
 
-![image](vdp_mu_0_0.png) ![image](vdp_mu_1_0.png) ![image](vdp_mu_4_0.png)
+![image](dda_plots.png)
 
 ## External hardware
 
