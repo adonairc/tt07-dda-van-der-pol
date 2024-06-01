@@ -26,7 +26,7 @@ The phase portraits for varying parameter $\mu$ are shown below. When $\mu=0$ th
 The set of coupled ODEs can be implemented in digital circuit as shown in the diagram below. At each DDA clock the integrators calculate the solutions for one time step $dt$.
 
 
-![image](van_der_pol_dda.png)
+![image](docs/van_der_pol_dda.png)
 
 For simplicity and limited chip area the time step is fixed by $dt = 1/256$ which proved to be enough given the precision of Posit(16,1) used in the arithmetic modules.
 
