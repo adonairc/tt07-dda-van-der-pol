@@ -27,9 +27,8 @@ module tt_um_adonairc_dda (
 	// SPI pins
 	wire sclk, cs, mosi, miso;
 
-	// Output ports
-	assign uio_out[2] = miso;
-	assign uio_oe[2] = 1;
+	// Output port (MISO)
+	assign uio_oe[2] = 1; 
 
 	// Input ports
 	assign cs  = uio_in[0];
@@ -138,6 +137,6 @@ module tt_um_adonairc_dda (
 		if (SCK_fallingedge) data_sent <= (bitcnt == 5'b00000)? x : {data_sent[30:0], 1'b0};
 	end
 
-	assign miso = data_sent[31]; // send MSB first
+	assign uio_out[2] = data_sent[31]; // send MSB first (MISO)
 
 endmodule
