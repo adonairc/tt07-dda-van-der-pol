@@ -60,6 +60,7 @@ The smallest posit number, **minpos** is obtained when *k* is as negative as pos
 $$
 minpos = (2^{2^{es}})^{2-N} = 1/maxpos
 $$
+
 And the expression for the dynamic range is
 
 $$
